@@ -9,7 +9,7 @@ const chatSchema = z.object({
     .trim()
     .min(1, 'Prompt is required.')
     .max(1000, 'Prompt is too long (max 1000 characters'),
-  conversationId: z.string().uuid(),
+  // conversationId: z.string().uuid(),
 });
 
 // Public interface
@@ -22,12 +22,16 @@ export const chatController = {
     }
 
     try {
-      const { prompt, conversationId } = req.body;
-      const response = await chatService.sendMessage(prompt, conversationId);
+      const { prompt } = req.body;
+      const response = await chatService.sendMessage(prompt);
 
       res.json({ message: response.message });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to generate a response.' });
+      console.error('Error generating chat response:', error);
+      res.status(500).json({
+        error: 'Failed to generate a response.',
+        message: (error as Error).message,
+      });
     }
   },
 };
