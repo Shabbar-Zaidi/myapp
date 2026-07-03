@@ -27,7 +27,11 @@ export const chatController = {
 
       res.json({ message: response.message });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to generate a response.' });
+      console.log(error);
+      res.status(500).json({
+        error: 'Failed to generate a response.',
+        message: (error as Error).message,
+      });
     }
   },
 };

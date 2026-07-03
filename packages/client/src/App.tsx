@@ -1,12 +1,11 @@
-import React from 'react';
-import { Button } from './components/ui/button';
-const App = () => {
+import ChatBot from './components/chat/ChatBot';
+
+function App() {
   return (
-    <div>
-      <p className="font-bold text-2xl">Hello world</p>
-      <Button>Click me</Button>
+    <div className="p-4 h-screen w-full">
+      <ChatBot />
     </div>
   );
-};
+}
 
 export default App;

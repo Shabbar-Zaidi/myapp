@@ -1,8 +1,5 @@
 import { conversationRepository } from '../repositories/conversation.repository';
-import OpenAI from 'openai';
-const openAIClient = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { llmClient } from '../llm/client';
 
 type ChatResponse = {
   id: string;
@@ -15,7 +12,7 @@ export const chatService = {
     prompt: string,
     conversationId: string
   ): Promise<ChatResponse> {
-    const response = await openAIClient.responses.create({
+    const response = await llmClient.generateText({
       model: 'gpt-4o-mini',
       prompt: prompt,
       temperature: 0.2,
