@@ -1,4 +1,4 @@
-// import { InferenceClient } from '@huggingface/inference';
+import { InferenceClient } from '@huggingface/inference';
 import { Ollama } from 'ollama';
 import OpenAI from 'openai';
 import summarizePrompt from '../llm/prompts/summarize-reviews.txt';
@@ -7,7 +7,7 @@ const openAIClient = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// const inferenceClient = new InferenceClient(process.env.HF_TOKEN);
+const inferenceClient = new InferenceClient(process.env.HF_TOKEN);
 
 const ollamaClient = new Ollama();
 
@@ -22,30 +22,52 @@ type GenerateTextOptions = {
 
 type GenerateTextResult = {
   id: string;
-  text: string;
+  text?: string;
 };
 
 export const llmClient = {
+  // async generateText({
+  //   model = 'gpt-4.1',
+  //   prompt,
+  //   instructions,
+  //   temperature = 0.2,
+  //   maxTokens = 300,
+  //   previousResponseId,
+  // }: GenerateTextOptions): Promise<GenerateTextResult> {
+  //   const response = await openAIClient.responses.create({
+  //     model,
+  //     input: prompt,
+  //     instructions,
+  //     temperature,
+  //     max_output_tokens: maxTokens,
+  //     previous_response_id: previousResponseId,
+  //   });
+
+  //   return {
+  //     id: response.id,
+  //     text: response.output_text,
+  //   };
+  // },
+
   async generateText({
-    model = 'gpt-4.1',
     prompt,
     instructions,
-    temperature = 0.2,
-    maxTokens = 300,
-    previousResponseId,
   }: GenerateTextOptions): Promise<GenerateTextResult> {
-    const response = await openAIClient.responses.create({
-      model,
-      input: prompt,
-      instructions,
-      temperature,
-      max_output_tokens: maxTokens,
-      previous_response_id: previousResponseId,
+    const response = await inferenceClient.chatCompletion({
+      model: 'meta-llama/Llama-3.1-8B-Instruct:novita',
+      messages: [
+        {
+          role: 'user',
+          instructions,
+          content: prompt,
+        },
+      ],
     });
 
+    // console.log(response.choices[0].message);
     return {
       id: response.id,
-      text: response.output_text,
+      text: response.choices[0]?.message.content,
     };
   },
 
